@@ -27,10 +27,10 @@ public class Tweeter extends Thread{
     public Tweeter() {
         ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setDebugEnabled(true)
-                .setOAuthConsumerKey("XXXXXXXXXXXXXXXX")
-                .setOAuthConsumerSecret("XXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-                .setOAuthAccessToken("XXXXXXXXXXXXXXXXXXXXXXX")
-                .setOAuthAccessTokenSecret("XXXXXXXXXXXXXXXXXXXXX");
+                .setOAuthConsumerKey(AuthStrings.OAuthConsumerKey)
+                .setOAuthConsumerSecret(AuthStrings.OAuthConsumerSecret)
+                .setOAuthAccessToken(AuthStrings.OAuthAccessToken)
+                .setOAuthAccessTokenSecret(AuthStrings.OAuthAccessTokenSecret);
         tf = new TwitterFactory(cb.build());
         start();
     }
@@ -39,7 +39,7 @@ public class Tweeter extends Thread{
      * Method will simply tweet a status
      * @param status - the status to tweet
      */
-    public void tweet(String status){
+    private void tweet(String status){
         Twitter twitter = this.tf.getInstance();
         try {
             twitter.updateStatus(status);
@@ -59,7 +59,7 @@ public class Tweeter extends Thread{
      * @param status - status to tweet
      * @throws InterruptedException - thrown if process is interrupted
      */
-    public void autotweet(Date postDate, String status) throws InterruptedException{
+    private void autotweet(Date postDate, String status) throws InterruptedException{
         Date current = new Date();
         long waitTime = postDate.getTime() - current.getTime();
         Thread.sleep(waitTime);
@@ -135,7 +135,6 @@ public class Tweeter extends Thread{
                 System.out.println(i + " - " + savedTweets.get(i));
             }
         }
-        System.out.println(savedTweets);
     }
 
     public static void main(String[] args) {
