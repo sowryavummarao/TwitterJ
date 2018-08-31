@@ -10,7 +10,7 @@ public class TwitterDB{
      * @throws ClassNotFoundException if JDBC driver class not found
      * @throws SQLException if can't be saved for some reason regarding MySQL
      */
-    public static boolean saveTweet(String status) throws ClassNotFoundException, SQLException{
+     static boolean saveTweet(String status) throws ClassNotFoundException, SQLException{
         Class.forName("com.mysql.jdbc.Driver");
         Connection con=DriverManager.getConnection(
                 "jdbc:mysql://localhost:3306/mydb","root",AuthStrings.DBPassword);
@@ -40,7 +40,7 @@ public class TwitterDB{
     /**
      * Shows all tweets in the database
      */
-    public static void viewTweets(){
+    static void viewTweets(){
         try{
             Class.forName("com.mysql.jdbc.Driver");
             Connection con=DriverManager.getConnection(
@@ -65,7 +65,7 @@ public class TwitterDB{
      * @throws ClassNotFoundException if JDBC driver class is not found
      * @throws SQLException if tweets can't be shown for some reason regarding MySQL
      */
-    public static String getTweetById(int id) throws ClassNotFoundException, SQLException{
+    static String getTweetById(int id) throws ClassNotFoundException, SQLException{
         Class.forName("com.mysql.jdbc.Driver");
         Connection con=DriverManager.getConnection(
                 "jdbc:mysql://localhost:3306/mydb","root",AuthStrings.DBPassword);
@@ -83,7 +83,7 @@ public class TwitterDB{
      * @param id of tweet to delete
      * @return whether deletion occurred or not
      */
-    public static boolean deleteTweet(int id){
+    static boolean deleteTweet(int id){
         try{
             Class.forName("com.mysql.jdbc.Driver");
             Connection con=DriverManager.getConnection(
