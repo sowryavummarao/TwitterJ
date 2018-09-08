@@ -1,6 +1,7 @@
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
+import twitter4j.auth.AccessToken;
 import twitter4j.conf.ConfigurationBuilder;
 
 import java.sql.SQLException;
@@ -21,6 +22,7 @@ public class Tweeter extends Thread{
         add("e"); //(e)nter tweet database
     }};
     TwitterFactory tf;
+    Twitter twitter;
     /**
      * Constructor sets up necessary authorizations and starts thread
      */
@@ -33,6 +35,12 @@ public class Tweeter extends Thread{
                 .setOAuthAccessToken(AuthStrings.OAuthAccessToken)
                 .setOAuthAccessTokenSecret(AuthStrings.OAuthAccessTokenSecret);
         tf = new TwitterFactory(cb.build());
+        twitter = tf.getInstance();
+        /*try {
+            TwitterAuth.setAccessTokens(twitter);
+        }catch (Exception e){
+            System.out.println("Authorization failed.");
+        }*/
         start();
     }
 
@@ -41,7 +49,6 @@ public class Tweeter extends Thread{
      * @param status - the status to tweet
      */
     private void tweet(String status){
-        Twitter twitter = this.tf.getInstance();
         try {
             twitter.updateStatus(status);
         }catch (TwitterException e){
