@@ -23,6 +23,7 @@ public class Tweeter extends Thread{
     }};
     TwitterFactory tf;
     Twitter twitter;
+    long userID;
     /**
      * Constructor sets up necessary authorizations and starts thread
      */
@@ -37,7 +38,7 @@ public class Tweeter extends Thread{
         tf = new TwitterFactory(cb.build());
         twitter = tf.getInstance();
         try {
-            TwitterAuth.setAccessTokens(twitter);
+            userID = TwitterAuth.setAccessTokens(twitter);
         }catch (Exception e){
             System.out.println("Authorization failed.");
         }
@@ -113,6 +114,7 @@ public class Tweeter extends Thread{
         try {
             autotweet(postDate, status);
         } catch (Exception e){
+            System.out.println(e);
         }
     }
 
@@ -125,7 +127,7 @@ public class Tweeter extends Thread{
         System.out.println("Would you like to now remove the tweet from your database? (y)es or (n)o");
         String choice = scanner.nextLine();
         if (choice.equals("y")){
-            TwitterDB.deleteTweet(tweetID);
+            TwitterDB.deleteTweet(this.userID, tweetID);
         }
     }
 
@@ -160,20 +162,21 @@ public class Tweeter extends Thread{
             System.out.println("What tweet idea would you like to save? ");
             String tweetIdea = scanner.nextLine();
             try {
-                TwitterDB.saveTweet(tweetIdea);
+                TwitterDB.saveTweet(this.userID,tweetIdea);
             }catch (Exception e){
+                System.out.println(e);
             }
         }
 
         //viewing tweets in database
         else if (choice.equals("v")){
             System.out.println("Here are your saved tweets!");
-            TwitterDB.viewTweets();
+            TwitterDB.viewTweets(this.userID);
         }
 
         //entering the tweet database
         else if (choice.equals("e")){
-            TwitterDB.viewTweets();
+            TwitterDB.viewTweets(this.userID);
             System.out.println("Type in the ID of the status that you would like to tweet, or delete: ");
             String tweetIDString = scanner.nextLine();
             int tweetID = -1;
@@ -181,7 +184,7 @@ public class Tweeter extends Thread{
             while (true){
                 try {
                     tweetID = Integer.parseInt(tweetIDString);
-                    selectedTweet = TwitterDB.getTweetById(tweetID);
+                    selectedTweet = TwitterDB.getTweetById(this.userID,tweetID);
                     break;
                 }catch (NumberFormatException e) {
                     System.out.println("Make sure your ID is a valid integer!");
@@ -189,7 +192,9 @@ public class Tweeter extends Thread{
                 }catch (SQLException e){
                     System.out.println("Make sure your ID has a corresponding tweet!");
                     tweetIDString = scanner.nextLine();
-                }catch (Exception e){}
+                }catch (Exception e){
+                    System.out.println(e);
+                }
             }
 
             //tweetID is obtained, now program checks what to do with that tweet
@@ -215,7 +220,7 @@ public class Tweeter extends Thread{
 
             //deleting the tweet
             else if (dbChoice.equals("d")){
-                TwitterDB.deleteTweet(tweetID);
+                TwitterDB.deleteTweet(this.userID, tweetID);
             }
         }
         System.out.println("Success!");

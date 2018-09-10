@@ -15,7 +15,7 @@ public class TwitterAuth {
      * @throws TwitterException if tweet cant be tweeted for some reason
      * @throws IOException if reading user's stdin results in an error
      */
-    static void setAccessTokens(Twitter twitter) throws TwitterException, IOException {
+    static long setAccessTokens(Twitter twitter) throws TwitterException, IOException {
         RequestToken requestToken = twitter.getOAuthRequestToken();
         AccessToken accessToken = null;
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -40,5 +40,6 @@ public class TwitterAuth {
         }
         //persist to the accessToken for future reference.
         twitter.setOAuthAccessToken(accessToken);
+        return accessToken.getUserId();
     }
 }
