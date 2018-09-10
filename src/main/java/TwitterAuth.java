@@ -8,15 +8,21 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class TwitterAuth {
+
+    /**
+     * This method will use OAuth to get necessary access tokens to allow users to easily authorize this app to function on their twitter
+     * @param twitter TwitterInstance needed to run all twitter related activity
+     * @throws TwitterException if tweet cant be tweeted for some reason
+     * @throws IOException if reading user's stdin results in an error
+     */
     static void setAccessTokens(Twitter twitter) throws TwitterException, IOException {
-        //twitter.setOAuthConsumer("[consumer key]", "[consumer secret]");
         RequestToken requestToken = twitter.getOAuthRequestToken();
         AccessToken accessToken = null;
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         while (null == accessToken) {
             System.out.println("Open the following URL and grant access to your account:");
             System.out.println(requestToken.getAuthorizationURL());
-            System.out.print("Enter the PIN(if aviailable) or just hit enter.[PIN]:");
+            System.out.print("Enter the PIN(if available) or just hit enter.[PIN]:");
             String pin = br.readLine();
             try{
                 if(pin.length() > 0){

@@ -31,16 +31,16 @@ public class Tweeter extends Thread{
         ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setDebugEnabled(true)
                 .setOAuthConsumerKey(AuthStrings.OAuthConsumerKey)
-                .setOAuthConsumerSecret(AuthStrings.OAuthConsumerSecret)
-                .setOAuthAccessToken(AuthStrings.OAuthAccessToken)
-                .setOAuthAccessTokenSecret(AuthStrings.OAuthAccessTokenSecret);
+                .setOAuthConsumerSecret(AuthStrings.OAuthConsumerSecret);
+                //.setOAuthAccessToken(AuthStrings.OAuthAccessToken)
+                //.setOAuthAccessTokenSecret(AuthStrings.OAuthAccessTokenSecret);
         tf = new TwitterFactory(cb.build());
         twitter = tf.getInstance();
-        /*try {
+        try {
             TwitterAuth.setAccessTokens(twitter);
         }catch (Exception e){
             System.out.println("Authorization failed.");
-        }*/
+        }
         start();
     }
 
