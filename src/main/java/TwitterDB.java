@@ -73,7 +73,7 @@ public class TwitterDB{
         Connection con=DriverManager.getConnection(
                 "jdbc:mysql://localhost:3306/mydb","root",AuthStrings.DBPassword);
         Statement stmt=con.createStatement();
-        String sql  = String.format("select status from tweets.userID = %d AND tweets where tweets.tweetID = %d", userID, tweetID);
+        String sql  = String.format("select status from tweets where tweets.userID = %d AND tweets.tweetID = %d", userID, tweetID);
         ResultSet rs = stmt.executeQuery(sql);
         rs.next();
         String tweet = rs.getString(1);

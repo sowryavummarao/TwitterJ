@@ -1,7 +1,6 @@
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
-import twitter4j.auth.AccessToken;
 import twitter4j.conf.ConfigurationBuilder;
 
 import java.sql.SQLException;
@@ -20,6 +19,7 @@ public class Tweeter extends Thread{
         add("s"); //(s)ave tweet
         add("v"); //(v)iew saved tweets
         add("e"); //(e)nter tweet database
+        add("q"); //(q)uit
     }};
     TwitterFactory tf;
     Twitter twitter;
@@ -137,90 +137,100 @@ public class Tweeter extends Thread{
      */
     public void run(){
         Scanner scanner = new Scanner(System.in);
-        String choice = "";
-        while (!choices.contains(choice)) {
-            System.out.println("Would you like to (t)weet, (a)utotweet, (s)ave a tweet, (v)iew saved tweets, or (e)nter your tweet database? ");
-            choice = scanner.nextLine();
-        }
-
-        //normal tweeting
-        if (choice.equals("t")){
-            System.out.println("What do you want to update your status to be? ");
-            String status = scanner.nextLine();
-            tweet(status);
-        }
-
-        //autotweeting
-        else if (choice.equals("a")) {
-            System.out.println("What do you want to update your status to be? ");
-            String status = scanner.nextLine();
-            autotweetWithoutInput(scanner, status);
-        }
-
-        //saving a tweet to database
-        else if (choice.equals("s")){
-            System.out.println("What tweet idea would you like to save? ");
-            String tweetIdea = scanner.nextLine();
-            try {
-                TwitterDB.saveTweet(this.userID,tweetIdea);
-            }catch (Exception e){
-                System.out.println(e);
+        while (true) {
+            String choice = "";
+            while (!choices.contains(choice)) {
+                System.out.println("Would you like to: \n(t)weet \n(a)utotweet \n(s)ave a tweet \n(v)iew saved tweets \n(e)nter your tweet database \n(q)uit ");
+                choice = scanner.nextLine();
             }
-        }
 
-        //viewing tweets in database
-        else if (choice.equals("v")){
-            System.out.println("Here are your saved tweets!");
-            TwitterDB.viewTweets(this.userID);
-        }
+            //normal tweeting
+            if (choice.equals("t")) {
+                System.out.println("What do you want to update your status to be? ");
+                String status = scanner.nextLine();
+                tweet(status);
+            }
 
-        //entering the tweet database
-        else if (choice.equals("e")){
-            TwitterDB.viewTweets(this.userID);
-            System.out.println("Type in the ID of the status that you would like to tweet, or delete: ");
-            String tweetIDString = scanner.nextLine();
-            int tweetID = -1;
-            String selectedTweet = "";
-            while (true){
+            //autotweeting
+            else if (choice.equals("a")) {
+                System.out.println("What do you want to update your status to be? ");
+                String status = scanner.nextLine();
+                autotweetWithoutInput(scanner, status);
+            }
+
+            //saving a tweet to database
+            else if (choice.equals("s")) {
+                System.out.println("What tweet idea would you like to save? ");
+                String tweetIdea = scanner.nextLine();
                 try {
-                    tweetID = Integer.parseInt(tweetIDString);
-                    selectedTweet = TwitterDB.getTweetById(this.userID,tweetID);
-                    break;
-                }catch (NumberFormatException e) {
-                    System.out.println("Make sure your ID is a valid integer!");
-                    tweetIDString = scanner.nextLine();
-                }catch (SQLException e){
-                    System.out.println("Make sure your ID has a corresponding tweet!");
-                    tweetIDString = scanner.nextLine();
-                }catch (Exception e){
+                    TwitterDB.saveTweet(this.userID, tweetIdea);
+                } catch (Exception e) {
                     System.out.println(e);
                 }
             }
 
-            //tweetID is obtained, now program checks what to do with that tweet
-            System.out.printf("Here is your selected tweet: %s\n", selectedTweet);
-            System.out.println("Would you like to (t)weet, (a)utotweet, or (d)elete? ");
-            String dbChoice = scanner.nextLine();
-            while (!dbChoice.equals("t") && !dbChoice.equals("a") && !dbChoice.equals("d")) {
+            //viewing tweets in database
+            else if (choice.equals("v")) {
+                System.out.println("Here are your saved tweets!");
+                TwitterDB.viewTweets(this.userID);
+            }
+
+            //entering the tweet database
+            else if (choice.equals("e")) {
+                TwitterDB.viewTweets(this.userID);
+                System.out.println("Type in the ID of the status that you would like to tweet, autotweet, or delete: ");
+                String tweetIDString = scanner.nextLine();
+                int tweetID = -1;
+                String selectedTweet = "";
+                while (true) {
+                    try {
+                        tweetID = Integer.parseInt(tweetIDString);
+                        selectedTweet = TwitterDB.getTweetById(this.userID, tweetID);
+                        break;
+                    } catch (NumberFormatException e) {
+                        System.out.println("Make sure your ID is a valid integer!");
+                        tweetIDString = scanner.nextLine();
+                    } catch (SQLException e) {
+                        System.out.println("Make sure your ID has a corresponding tweet!");
+                        tweetIDString = scanner.nextLine();
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
+                }
+
+                //tweetID is obtained, now program checks what to do with that tweet
+                System.out.printf("Here is your selected tweet: %s\n", selectedTweet);
                 System.out.println("Would you like to (t)weet, (a)utotweet, or (d)elete? ");
-                dbChoice = scanner.nextLine();
+                String dbChoice = scanner.nextLine();
+                while (!dbChoice.equals("t") && !dbChoice.equals("a") && !dbChoice.equals("d")) {
+                    System.out.println("Would you like to (t)weet, (a)utotweet, or (d)elete? ");
+                    dbChoice = scanner.nextLine();
+                }
+
+                //normal tweeting
+                if (dbChoice.equals("t")) {
+                    tweet(selectedTweet);
+                    deleteAfterTweeting(tweetID, scanner);
+                }
+
+                //autotweeting
+                else if (dbChoice.equals("a")) {
+                    autotweetWithoutInput(scanner, selectedTweet);
+                    deleteAfterTweeting(tweetID, scanner);
+                }
+
+                //deleting the tweet
+                else if (dbChoice.equals("d")) {
+                    TwitterDB.deleteTweet(this.userID, tweetID);
+                }
             }
 
-            //normal tweeting
-            if (dbChoice.equals("t")){
-                tweet(selectedTweet);
-                deleteAfterTweeting(tweetID, scanner);
+            else if (choice.equals("q")) {
+                break;
             }
 
-            //autotweeting
-            else if (dbChoice.equals("a")) {
-                autotweetWithoutInput(scanner, selectedTweet);
-                deleteAfterTweeting(tweetID, scanner);
-            }
-
-            //deleting the tweet
-            else if (dbChoice.equals("d")){
-                TwitterDB.deleteTweet(this.userID, tweetID);
+            else {
+                System.out.println("Not a valid choice.");
             }
         }
         System.out.println("Success!");
