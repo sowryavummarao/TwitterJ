@@ -9,3 +9,5 @@ Users can also save tweet ideas into a database, and tweet/autotweet straight fr
 Application uses OAuth so that users don't have to manually sign in. 
 
 When users click on the authorization link, it will redirect to https://rhetocracy.org (just a placeholder website for now) after, there will be 2 parameters in the URL, "oauth_token" and "oauth_verifier", the value of "ouath_verifier" should be copied and pasted as the PIN into the application. 
+
+Program runs until user supplies quit option, only one authorization required per run of program.
